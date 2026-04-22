@@ -1,0 +1,119 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitive Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Role-based Access Checks
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email.lower() == 'abdulohaaa.777@gmail.com' ||
+        request.auth.token.email.lower() == 'abdullohaaa.777@gmail.com'
+      );
+    }
+
+    function isAdmin() {
+      // Allow superadmin explicitly
+      return isSuperAdmin() || (
+        isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin']
+      );
+    }
+
+    // ---------------------------------------------------------
+    // USERS COLLECTION
+    // ---------------------------------------------------------
+    match /users/{userId} {
+      // Only users can read their own data, OR admins can read everyone
+      allow get: if isSuperAdmin() || isAdmin() || (isSignedIn() && request.auth.uid == userId);
+      allow list: if isSuperAdmin() || isAdmin();
+
+      // Users self-register default user profiles
+      allow create: if isSignedIn() && request.auth.uid == userId && 
+        incoming().keys().hasAll(['email', 'role', 'createdAt']) &&
+        (
+          (isSuperAdmin() && incoming().role == 'superadmin') || 
+          (incoming().role == 'user')
+        ) &&
+        incoming().createdAt == request.time;
+        
+      // Only SuperAdmin can modify roles
+      allow update: if isSuperAdmin() || isAdmin() || (
+        isSignedIn() && request.auth.uid == userId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'updatedAt']) &&
+        incoming().role == existing().role
+      );
+
+      allow delete: if isSuperAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // CONTENT COLLECTION
+    // ---------------------------------------------------------
+    match /content/{contentId} {
+      // Public reading
+      allow get: if existing().status == 'published' || isAdmin() || isSuperAdmin();
+      allow list: if existing().status == 'published' || isAdmin() || isSuperAdmin();
+
+      // Interactions (View Counter / interactions)
+      // We allow anonymous/public users to increment the view count ONLY
+      allow update: if (isAdmin() || isSuperAdmin()) || (
+        incoming().diff(existing()).affectedKeys().hasOnly(['viewCount']) &&
+        incoming().viewCount == existing().viewCount + 1 &&
+        existing().status == 'published'
+      );
+
+      // Admins manage all content
+      allow create: if (isAdmin() || isSuperAdmin());
+      allow update: if (isAdmin() || isSuperAdmin());
+      allow delete: if (isAdmin() || isSuperAdmin());
+    }
+
+    // ---------------------------------------------------------
+    // CATEGORIES COLLECTION
+    // ---------------------------------------------------------
+    match /categories/{categoryId} {
+      allow read: if true; // Public access to category list
+      allow write: if isAdmin() || isSuperAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // AUTHORS COLLECTION
+    // ---------------------------------------------------------
+    match /authors/{authorId} {
+      allow read: if true; // Public author profiles
+      allow write: if isAdmin() || isSuperAdmin();
+    }
+
+    // ---------------------------------------------------------
+    // CERTIFICATES COLLECTION
+    // ---------------------------------------------------------
+    match /certificates/{certificateId} {
+      allow read: if true; // Verification is public
+      allow write: if isAdmin() || isSuperAdmin();
+    }
+
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "entities": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "admin", "superadmin"] },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Content": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "object" },
+        "slug": { "type": "string" },
+        "type": { "type": "string", "enum": ["article", "thesis", "poetry", "news", "science", "creative"] },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "shortDescription": { "type": "object" },
+        "body": { "type": "object" },
+        "coverImage": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "language": { "type": "string" },
+        "status": { "type": "string", "enum": ["draft", "published"] },
+        "viewCount": { "type": "number" },
+        "downloadCount": { "type": "number" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["title", "slug", "type", "status"]
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "object" },
+        "slug": { "type": "string" }
+      },
+      "required": ["name", "slug"]
+    },
+    "Author": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "bio": { "type": "object" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["name"]
+    },
+    "Certificate": {
+      "type": "object",
+      "properties": {
+        "contentId": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "certificateId": { "type": "string" },
+        "pdfUrl": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["contentId", "certificateId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and roles"
+    },
+    "/content/{contentId}": {
+      "schema": "Content",
+      "description": "Main platform content like articles, theses, poems"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Content categories mapped to different languages"
+    },
+    "/authors/{authorId}": {
+      "schema": "Author",
+      "description": "Author profiles connected to content"
+    },
+    "/certificates/{certificateId}": {
+      "schema": "Certificate",
+      "description": "Generated certificates for material authors"
+    }
+  }
+}
