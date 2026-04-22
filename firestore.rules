@@ -75,7 +75,7 @@ service cloud.firestore {
     match /content/{contentId} {
       // Public reading
       allow get: if existing().status == 'published' || isAdmin() || isSuperAdmin();
-      allow list: if existing().status == 'published' || isAdmin() || isSuperAdmin();
+      allow list: if resource.data.status == 'published' || isAdmin() || isSuperAdmin();
 
       // Interactions (View Counter / interactions)
       // We allow anonymous/public users to increment the view count ONLY
