@@ -1,15 +1,17 @@
 import { Outlet, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
-import { signInWithGoogle, logout } from '../../lib/firebase';
+import { logout } from '../../lib/firebase';
 import { Globe, User as UserIcon, ShieldCheck, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import { AuthModal } from './AuthModal';
 
 export function Navbar() {
   const { t, i18n } = useTranslation();
   const { user, profile, isAdmin } = useAuth();
   const [langOpen, setLangOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -99,13 +101,7 @@ export function Navbar() {
             </div>
           ) : (
             <button
-              onClick={async () => {
-                try {
-                  await signInWithGoogle();
-                } catch (error: any) {
-                  alert("Tizimga kirishda xatolik: " + error.message);
-                }
-              }}
+              onClick={() => setIsAuthModalOpen(true)}
               className="flex ml-2 items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-1.5 border border-primary-900 text-primary-900 hover:bg-primary-900 hover:text-white transition-colors font-sans text-[11px] font-bold uppercase tracking-wider rounded-sm"
             >
               <UserIcon className="w-3.5 h-3.5" />
@@ -123,6 +119,8 @@ export function Navbar() {
         <Link to="/conference-papers" className="hover:text-accent-500 transition-colors">Conferences</Link>
         <Link to="/authors" className="hover:text-accent-500 transition-colors">Authors</Link>
       </div>
+
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </header>
   );
 }
