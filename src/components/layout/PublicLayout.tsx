@@ -99,14 +99,29 @@ export function Navbar() {
             </div>
           ) : (
             <button
-              onClick={signInWithGoogle}
-              className="hidden md:flex ml-2 items-center gap-1.5 px-4 py-1.5 border border-primary-900 text-primary-900 hover:bg-primary-900 hover:text-white transition-colors font-sans text-[11px] font-bold uppercase tracking-wider rounded-sm"
+              onClick={async () => {
+                try {
+                  await signInWithGoogle();
+                } catch (error: any) {
+                  alert("Tizimga kirishda xatolik: " + error.message);
+                }
+              }}
+              className="flex ml-2 items-center gap-1.5 px-3 py-1.5 md:px-4 md:py-1.5 border border-primary-900 text-primary-900 hover:bg-primary-900 hover:text-white transition-colors font-sans text-[11px] font-bold uppercase tracking-wider rounded-sm"
             >
               <UserIcon className="w-3.5 h-3.5" />
-              {t('login')}
+              <span className="hidden sm:inline">{t('login')}</span>
             </button>
           )}
         </div>
+      </div>
+      
+      {/* Scrollable Horizontal Mobile Nav */}
+      <div className="md:hidden overflow-x-auto whitespace-nowrap bg-gray-50 border-t border-gray-100 px-4 py-2 flex items-center gap-4 text-[11px] uppercase tracking-widest font-bold text-gray-700 font-sans hide-scrollbar">
+        <Link to="/" className="hover:text-accent-500 transition-colors">{t('home')}</Link>
+        <Link to="/scholar" className="hover:text-accent-500 transition-colors text-primary-900">Scholar</Link>
+        <Link to="/archive" className="hover:text-accent-500 transition-colors">Archive</Link>
+        <Link to="/conference-papers" className="hover:text-accent-500 transition-colors">Conferences</Link>
+        <Link to="/authors" className="hover:text-accent-500 transition-colors">Authors</Link>
       </div>
     </header>
   );
