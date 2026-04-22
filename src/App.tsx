@@ -25,9 +25,17 @@ export default function App() {
             <Route path="/" element={<PublicLayout />}>
               <Route index element={<Home />} />
               <Route path="articles" element={<ContentList overrideType="article" />} />
+              <Route path="articles/:slug" element={<ContentDetail />} />
               <Route path="theses" element={<ContentList overrideType="thesis" />} />
+              <Route path="theses/:slug" element={<ContentDetail />} />
+              <Route path="conference-papers" element={<ContentList overrideType="conference_paper" />} />
+              <Route path="conference-papers/:slug" element={<ContentDetail />} />
               <Route path="poems" element={<ContentList overrideType="poetry" />} />
+              <Route path="poems/:slug" element={<ContentDetail />} />
               <Route path="content/:slug" element={<ContentDetail />} />
+              <Route path="authors" element={<ContentList overrideType="author" />} />
+              <Route path="archive" element={<ContentList overrideType="archive" />} />
+              <Route path="scholar" element={<ContentList overrideType="scholar" />} />
               <Route path="verify" element={<VerifyCertificate />} />
             </Route>
 

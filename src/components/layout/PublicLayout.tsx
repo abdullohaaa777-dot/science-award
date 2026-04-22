@@ -27,14 +27,12 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 font-sans text-[13px] uppercase tracking-[1px] font-semibold text-gray-800">
+        <nav className="hidden md:flex items-center gap-6 font-sans text-[11px] uppercase tracking-widest font-bold text-gray-800">
           <Link to="/" className="hover:text-accent-500 transition-colors">{t('home')}</Link>
-          <Link to="/articles" className="hover:text-accent-500 transition-colors">{t('articles')}</Link>
-          <Link to="/theses" className="hover:text-accent-500 transition-colors">{t('theses')}</Link>
-          <Link to="/poems" className="hover:text-accent-500 transition-colors">{t('poems')}</Link>
-          <Link to="/verify" className="hover:text-accent-500 transition-colors">
-            {t('verify_certificate')}
-          </Link>
+          <Link to="/scholar" className="hover:text-accent-500 transition-colors text-primary-900 border-b border-accent-500 pb-0.5">Scholar Database</Link>
+          <Link to="/archive" className="hover:text-accent-500 transition-colors">Archive</Link>
+          <Link to="/conference-papers" className="hover:text-accent-500 transition-colors">Conferences</Link>
+          <Link to="/authors" className="hover:text-accent-500 transition-colors">Authors</Link>
         </nav>
 
         <div className="flex items-center gap-4">
@@ -131,11 +129,13 @@ export function Footer() {
             </p>
           </div>
           <div>
-            <h4 className="text-white text-[11px] uppercase tracking-widest font-bold mb-4">{t('categories')}</h4>
+            <h4 className="text-white text-[11px] uppercase tracking-widest font-bold mb-4">Academic Resources</h4>
             <ul className="space-y-3 text-[13px] text-gray-300">
-              <li><Link to="/articles" className="hover:text-accent-500 transition-colors">{t('articles')}</Link></li>
-              <li><Link to="/theses" className="hover:text-accent-500 transition-colors">{t('theses')}</Link></li>
-              <li><Link to="/poems" className="hover:text-accent-500 transition-colors">{t('poems')}</Link></li>
+              <li><Link to="/scholar" className="hover:text-accent-500 transition-colors">Scholar Index</Link></li>
+              <li><Link to="/archive" className="hover:text-accent-500 transition-colors">Full Archive</Link></li>
+              <li><Link to="/articles" className="hover:text-accent-500 transition-colors">Journal Articles</Link></li>
+              <li><Link to="/theses" className="hover:text-accent-500 transition-colors">Theses & Dissertations</Link></li>
+              <li><Link to="/conference-papers" className="hover:text-accent-500 transition-colors">Conference Proceedings</Link></li>
             </ul>
           </div>
           <div>
